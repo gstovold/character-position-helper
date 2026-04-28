@@ -45,9 +45,9 @@ export default function App() {
       </nav>
 
       <div className="hero">
-        <h1 className="hero-title">Character position finder</h1>
+        <h1 className="hero-title">Character Position Finder</h1>
         <p className="hero-sub">
-          <span>Enter any word and instantly see every character's position.</span>
+          <span>Enter any word and instantly see every character's numerical position.</span>
           <span>Nothing is saved or sent — ever.</span>
         </p>
       </div>
