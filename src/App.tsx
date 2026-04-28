@@ -212,3 +212,8 @@ export default function App() {
       </main>
 
       <footer className="app-footer">
+        <p><strong>Privacy:</strong> This app runs entirely in your browser. No data leaves your device. No cookies. No analytics. Works offline.</p>
+      </footer>
+    </div>
+  )
+}Í
