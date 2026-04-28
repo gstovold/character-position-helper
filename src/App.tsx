@@ -18,7 +18,7 @@ function parseOrderedPositions(str: string): number[] {
 export default function App() {
   const [input, setInput] = useState('')
   const [positions, setPositions] = useState('')
-  const inputRef = useRef<HTMLTextAreaElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const entries: CharEntry[] = parseCharacters(input)
   const orderedPositions = parseOrderedPositions(positions)
@@ -45,17 +45,20 @@ export default function App() {
       </nav>
 
       <div className="hero">
-        <h1 className="hero-title">Character position finder</h1>
-        <p className="hero-sub">Enter any word and instantly see every character's position. Nothing is saved or sent — ever.</p>
+        <h1 className="hero-title">Character Position Finder</h1>
+        <p className="hero-sub">
+          <span>Enter any word and instantly see every character's numerical position.</span>
+          <span>Nothing is saved or sent — ever.</span>
+        </p>
       </div>
 
       <div className="card">
         <label className="field-label" htmlFor="char-input">Your characters</label>
-        <p className="field-hint">Paste a password, memorable word, or reference code</p>
-        <textarea
+        <input
           ref={inputRef}
           id="char-input"
           className="input"
+          type="text"
           value={input}
           onChange={e => setInput(e.target.value)}
           placeholder="e.g. MyP@ssw0rd or ABC123"
@@ -63,15 +66,11 @@ export default function App() {
           autoCorrect="off"
           autoCapitalize="off"
           spellCheck={false}
-          rows={2}
         />
-
-        <div className="divider" />
 
         <label className="field-label" htmlFor="pos-input">
           Positions needed <span className="optional">optional</span>
         </label>
-        <p className="field-hint">Type digits in the order asked — e.g. 523 shows the 5th, 2nd then 3rd character</p>
         <input
           id="pos-input"
           className="input pos-input"
