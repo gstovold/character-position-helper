@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Character Position Helper
 
 A privacy-first Progressive Web App (PWA) that shows the numbered position of every character in a string. Designed for situations like "enter the 4th, 6th and 1st characters of your password."
@@ -166,3 +167,6 @@ npm test
 ## License
 
 MIT — free to use, modify, and deploy.
+=======
+# character-position-helper
+>>>>>>> 05b2d1b6cad4696ce6209ff09a1bd8ba90d67a6d
