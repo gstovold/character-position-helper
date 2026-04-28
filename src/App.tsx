@@ -1,9 +1,7 @@
-import { useState, useRef, useCallback, useEffect } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import { parseCharacters, displayChar } from './utils/charUtils'
 import type { CharEntry } from './utils/charUtils'
 import './App.css'
-
-type CopyState = 'idle' | 'copied' | 'error'
 
 function parseOrderedPositions(str: string): number[] {
   const digits = str.replace(/\D/g, '').split('')
@@ -20,14 +18,7 @@ function parseOrderedPositions(str: string): number[] {
 export default function App() {
   const [input, setInput] = useState('')
   const [positions, setPositions] = useState('')
-  const [hidden, setHidden] = useState(false)
-  const [dark, setDark] = useState(true)
-  const [copyState, setCopyState] = useState<CopyState>('idle')
   const inputRef = useRef<HTMLTextAreaElement>(null)
-
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light')
-  }, [dark])
 
   const entries: CharEntry[] = parseCharacters(input)
   const orderedPositions = parseOrderedPositions(positions)
@@ -37,182 +28,116 @@ export default function App() {
   const handleClear = useCallback(() => {
     setInput('')
     setPositions('')
-    setCopyState('idle')
     inputRef.current?.focus()
   }, [])
 
-  const handleCopy = useCallback(async () => {
-    if (entries.length === 0) return
-    const text = entries
-      .map(e => `${e.position}: ${e.isSpace ? '(space)' : hidden ? '*' : e.char}`)
-      .join('\n')
-    try {
-      await navigator.clipboard.writeText(text)
-      setCopyState('copied')
-      setTimeout(() => setCopyState('idle'), 2000)
-    } catch {
-      setCopyState('error')
-      setTimeout(() => setCopyState('idle'), 2000)
-    }
-  }, [entries, hidden])
-
-  const copyLabel =
-    copyState === 'copied' ? '✓ Copied!' : copyState === 'error' ? 'Failed' : 'Copy positions'
-
   return (
-    <div className="app">
-      <header className="app-header">
-        <div className="header-top">
-          <div className="header-inner">
-            <div className="logo" aria-hidden="true">
-              <span className="logo-char">A</span>
-              <span className="logo-pos">1</span>
-            </div>
-            <div>
-              <h1 className="app-title">Character Position Helper</h1>
-              <p className="app-subtitle">Find any character's position — instantly</p>
-            </div>
-          </div>
-          <div className="theme-wrap">
-            <span className="theme-icon" aria-hidden="true">🌙</span>
-            <label className="toggle" aria-label="Toggle light and dark mode">
-              <input
-                type="checkbox"
-                checked={!dark}
-                onChange={e => setDark(!e.target.checked)}
-              />
-              <div className="track"><div className="thumb"></div></div>
-            </label>
-            <span className="theme-icon" aria-hidden="true">☀️</span>
-          </div>
+    <div className="page">
+      <nav className="nav">
+        <div className="brand">
+          <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="52" height="52" rx="14" fill="#C17B3F"/>
+            <text x="26" y="30" fontFamily="Georgia, serif" fontSize="26" fontWeight="400" fill="white" textAnchor="middle">A</text>
+            <text x="26" y="43" fontFamily="monospace" fontSize="9" fontWeight="400" fill="white" opacity="0.7" textAnchor="middle">1</text>
+          </svg>
+          <div className="wordmark">Letter<span>Map</span></div>
         </div>
-        <div className="privacy-badge" role="note">
-          <span aria-hidden="true">🔒</span>
-          <span>Nothing is saved, sent, or tracked. Ever.</span>
+      </nav>
+
+      <div className="hero">
+        <h1 className="hero-title">Character position finder</h1>
+        <p className="hero-sub">Enter any word and instantly see every character's position. Nothing is saved or sent — ever.</p>
+      </div>
+
+      <div className="card">
+        <label className="field-label" htmlFor="char-input">Your characters</label>
+        <p className="field-hint">Paste a password, memorable word, or reference code</p>
+        <textarea
+          ref={inputRef}
+          id="char-input"
+          className="input"
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          placeholder="e.g. MyP@ssw0rd or ABC123"
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="off"
+          spellCheck={false}
+          rows={2}
+        />
+        <div className="divider" />
+        <label className="field-label" htmlFor="pos-input">
+          Positions needed <span className="optional">optional</span>
+        </label>
+        <p className="field-hint">Type digits in the order asked — e.g. 523 shows the 5th, 2nd then 3rd character</p>
+        <input
+          id="pos-input"
+          className="input pos-input"
+          type="text"
+          value={positions}
+          onChange={e => setPositions(e.target.value.replace(/\D/g, ''))}
+          placeholder="e.g. 523"
+          autoComplete="off"
+          inputMode="numeric"
+        />
+        <div className="controls">
+          <button
+            className="btn btn-danger"
+            onClick={handleClear}
+            disabled={!hasChars && !positions}
+          >
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+            Clear
+          </button>
         </div>
-      </header>
+      </div>
 
-      <main className="app-main">
-        <section className="input-section">
-          <label htmlFor="char-input" className="input-label">
-            Paste or type your characters
-          </label>
-          <p className="input-hint">
-            Enter a password, code, word, or any string. It stays in your browser only.
-          </p>
-          <textarea
-            ref={inputRef}
-            id="char-input"
-            className="char-input"
-            value={input}
-            onChange={e => setInput(e.target.value)}
-            placeholder="e.g. MyP@ssw0rd or ABC123"
-            autoComplete="off"
-            autoCorrect="off"
-            autoCapitalize="off"
-            spellCheck={false}
-            rows={3}
-          />
-
-          <div className="highlight-group">
-            <div className="highlight-label-row">
-              <label htmlFor="pos-input" className="input-label">
-                Show characters at positions
-              </label>
-              <span className="optional-tag">optional</span>
-            </div>
-            <p className="input-hint">
-              Type position digits in the order asked — e.g. <strong>523</strong> shows the 5th, 2nd then 3rd character
-            </p>
-            <input
-              id="pos-input"
-              className="char-input pos-input"
-              type="text"
-              value={positions}
-              onChange={e => setPositions(e.target.value.replace(/\D/g, ''))}
-              placeholder="e.g. 523"
-              autoComplete="off"
-              inputMode="numeric"
-            />
-          </div>
-
-          <div className="controls">
-            <button className="btn" onClick={() => setHidden(h => !h)} aria-pressed={hidden}>
-              <span aria-hidden="true">{hidden ? '👁' : '🙈'}</span>
-              {hidden ? 'Show characters' : 'Hide characters'}
-            </button>
-            <button className="btn" onClick={handleCopy} disabled={!hasChars}>
-              <span aria-hidden="true">📋</span>
-              {copyLabel}
-            </button>
-            <button className="btn btn-danger" onClick={handleClear} disabled={!hasChars && !positions}>
-              <span aria-hidden="true">✕</span>
-              Clear
-            </button>
+      {hasPositions && hasChars && (
+        <section className="result-card" aria-label="Characters in requested order">
+          <span className="result-label">Your characters in order</span>
+          <div className="result-grid">
+            {orderedPositions.map((pos, i) => {
+              const entry = entries[pos - 1]
+              if (!entry) return null
+              return (
+                <div
+                  key={i}
+                  className="result-tile"
+                  style={{ animationDelay: `${i * 55}ms` }}
+                  aria-label={`Position ${pos}: ${entry.isSpace ? 'space' : entry.char}`}
+                >
+                  <span className="tc" aria-hidden="true">{displayChar(entry, false)}</span>
+                  <span className="tp" aria-hidden="true">{pos}</span>
+                </div>
+              )
+            })}
           </div>
         </section>
+      )}
 
-        {/* Result strip — shown only when positions are typed */}
-        {hasPositions && hasChars && (
-          <section className="result-section" aria-label="Characters in requested order">
-            <p className="result-label">Your characters in order</p>
-            <div className="result-grid">
-              {orderedPositions.map((pos, i) => {
-                const entry = entries[pos - 1]
-                if (!entry) return null
-                return (
-                  <div
-                    key={i}
-                    className="result-tile"
-                    style={{ animationDelay: `${i * 60}ms` }}
-                    aria-label={`Position ${pos}: ${entry.isSpace ? 'space' : hidden ? 'hidden' : entry.char}`}
-                  >
-                    <span className="tile-char" aria-hidden="true">{displayChar(entry, hidden)}</span>
-                    <span className="tile-pos" aria-hidden="true">{pos}</span>
-                  </div>
-                )
-              })}
-            </div>
-          </section>
-        )}
-
-        {/* Full grid — shown only when no positions typed */}
-        {!hasPositions && hasChars && (
-          <section className="grid-section" aria-label="All character positions">
-            <p className="grid-label">{entries.length} character{entries.length !== 1 ? 's' : ''}</p>
-            <div className="char-grid" role="list">
-              {entries.map(entry => (
-                <div
-                  key={entry.position}
-                  className={`char-tile${entry.isSpace ? ' char-tile--space' : ''}`}
-                  role="listitem"
-                  aria-label={`Position ${entry.position}: ${entry.isSpace ? 'space' : hidden ? 'hidden' : entry.char}`}
-                >
-                  <span className="tile-char" aria-hidden="true">{displayChar(entry, hidden)}</span>
-                  <span className="tile-pos" aria-hidden="true">{entry.position}</span>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {!hasChars && (
-          <div className="empty-state" aria-hidden="true">
-            <div className="empty-grid-preview">
-              {[1,2,3,4,5].map(i => (
-                <div key={i} className="char-tile char-tile--ghost">
-                  <span className="tile-char">?</span>
-                  <span className="tile-pos">{i}</span>
-                </div>
-              ))}
-            </div>
-            <p className="empty-label">Your characters will appear here</p>
+      {!hasPositions && hasChars && (
+        <section className="grid-section" aria-label="All character positions">
+          <p className="grid-meta">{entries.length} character{entries.length !== 1 ? 's' : ''}</p>
+          <div className="char-grid" role="list">
+            {entries.map(entry => (
+              <div
+                key={entry.position}
+                className={`tile${entry.isSpace ? ' sp' : ''}`}
+                role="listitem"
+                aria-label={`Position ${entry.position}: ${entry.isSpace ? 'space' : entry.char}`}
+              >
+                <span className="tc" aria-hidden="true">{displayChar(entry, false)}</span>
+                <span className="tp" aria-hidden="true">{entry.position}</span>
+              </div>
+            ))}
           </div>
-        )}
-      </main>
+        </section>
+      )}
 
-      <footer className="app-footer">
-        <p><strong>Privacy:</strong> This app runs entirely in your browser. No data leaves your device. No cookies. No analytics. Works offline.</p>
+      <footer className="footer">
+        <strong>Privacy:</strong> LetterMap runs entirely in your browser. No data leaves your device. No cookies. No analytics. Works offline.
       </footer>
     </div>
   )
