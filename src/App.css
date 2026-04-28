@@ -11,7 +11,7 @@
   --fm: 'DM Mono', monospace;
   --fs: 'DM Sans', system-ui, sans-serif;
   --fserif: 'DM Serif Display', Georgia, serif;
-  --text-md: 0.9rem; --text-sm: 0.82rem;
+  --text-md: 1rem; --text-sm: 0.875rem;
 }
 
 html { font-family: var(--fs); background: var(--cream); color: var(--ink); }
@@ -32,9 +32,10 @@ body { min-height: 100dvh; background: var(--cream); }
 
 .card { background: var(--tile-bg); border: 1px solid var(--bdr); border-radius: var(--r-lg); padding: 24px; margin-bottom: 16px; display: flex; flex-direction: column; gap: 8px; }
 .field-label { font-size: var(--text-sm); font-weight: 500; color: var(--ink); }
-.optional { font-size: 0.72rem; color: var(--ink3); background: var(--cream2); border: 1px solid var(--bdr); border-radius: 20px; padding: 1px 7px; margin-left: 6px; vertical-align: middle; font-weight: 400; }
+.optional { font-size: 0.75rem; color: var(--ink3); background: var(--cream2); border: 1px solid var(--bdr); border-radius: 20px; padding: 1px 7px; margin-left: 6px; vertical-align: middle; font-weight: 400; }
 
-.input { width: 100%; background: var(--cream); border: 1.5px solid var(--bdr); border-radius: var(--r); color: var(--ink); font-family: var(--fm); font-size: var(--text-md); padding: 11px 14px; outline: none; line-height: 1.6; transition: border-color .18s, box-shadow .18s; }
+/* 16px minimum prevents iOS zoom on focus */
+.input { width: 100%; background: var(--cream); border: 1.5px solid var(--bdr); border-radius: var(--r); color: var(--ink); font-family: var(--fm); font-size: 16px; padding: 11px 14px; outline: none; line-height: 1.6; transition: border-color .18s, box-shadow .18s; }
 .input::placeholder { color: var(--ink3); }
 .input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(193,123,63,0.1); }
 .pos-input { letter-spacing: 0.15em; }
