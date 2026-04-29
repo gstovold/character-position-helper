@@ -65,7 +65,7 @@ export default function App() {
 
   useEffect(() => {
     setRecents(loadRecents())
-    const timer = setTimeout(() => setLoading(false), 4000)
+    const timer = setTimeout(() => setLoading(false), 3000)
     return () => clearTimeout(timer)
   }, [])
 
