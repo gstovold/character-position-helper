@@ -166,7 +166,7 @@ export default function App() {
           onChange={e => handlePositionsChange(e.target.value)}
           placeholder="e.g. 1,3,6"
           autoComplete="off"
-          inputMode="numeric"
+          inputMode="decimal"
         />
 
         <div className="controls">
