@@ -35,16 +35,6 @@ function saveRecents(items: Recent[]) {
   try { localStorage.setItem(RECENTS_KEY, JSON.stringify(items)) } catch {}
 }
 
-function timeAgo(timestamp: number): string {
-  const mins = Math.floor((Date.now() - timestamp) / 60000)
-  if (mins < 1) return 'just now'
-  if (mins < 60) return `${mins}m ago`
-  const hrs = Math.floor(mins / 60)
-  if (hrs < 24) return `${hrs}h ago`
-  const days = Math.floor(hrs / 24)
-  return `${days}d ago`
-}
-
 export default function App() {
   const [input, setInput] = useState('')
   const [positions, setPositions] = useState('')
@@ -152,7 +142,6 @@ export default function App() {
                   onClick={() => { setInput(r.word); inputRef.current?.focus() }}
                 >
                   <span>{r.word}</span>
-                  <span className="chip-time">{timeAgo(r.timestamp)}</span>
                 </button>
               ))}
             </div>
