@@ -12,12 +12,13 @@ interface Recent {
 }
 
 function parseOrderedPositions(str: string): number[] {
-  const digits = str.replace(/\D/g, '').split('')
+  if (!str.trim()) return []
   const seen = new Set<number>()
-  return digits
-    .map(d => parseInt(d, 10))
+  return str
+    .split(/[\s,]+/)
+    .map(s => parseInt(s, 10))
     .filter(n => {
-      if (n === 0 || seen.has(n)) return false
+      if (isNaN(n) || n === 0 || seen.has(n)) return false
       seen.add(n)
       return true
     })
@@ -80,6 +81,11 @@ export default function App() {
     setInput('')
     setPositions('')
     inputRef.current?.focus()
+  }, [])
+
+  const handlePositionsChange = useCallback((val: string) => {
+    // Only allow numbers, commas and spaces
+    setPositions(val.replace(/[^0-9,\s]/g, ''))
   }, [])
 
   const entries: CharEntry[] = parseCharacters(input)
@@ -157,8 +163,8 @@ export default function App() {
           className="input pos-input"
           type="text"
           value={positions}
-          onChange={e => setPositions(e.target.value.replace(/\D/g, ''))}
-          placeholder="e.g. 523"
+          onChange={e => handlePositionsChange(e.target.value)}
+          placeholder="e.g. 1, 3, 6"
           autoComplete="off"
           inputMode="numeric"
         />
@@ -220,7 +226,7 @@ export default function App() {
       )}
 
       <footer className="footer">
-        <strong>Privacy:</strong> LetterMap runs entirely in your browser. No data leaves your device. Recent words are saved on this device only and never sent anywhere. No cookies. Works offline.
+        <strong>Privacy:</strong> LetterMap runs entirely in your browser. No data leaves your device. Recent words are saved on this device only and never sent anywhere. Use Clear to remove them at any time. No cookies. No analytics. Works offline.
       </footer>
     </div>
   )
