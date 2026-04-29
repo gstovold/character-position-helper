@@ -5,7 +5,6 @@ import './App.css'
 
 const RECENTS_KEY = 'lettermap_recents'
 const MAX_RECENTS = 4
-const EXPIRY_MS = 24 * 60 * 60 * 1000
 
 interface Recent {
   word: string
@@ -28,9 +27,7 @@ function loadRecents(): Recent[] {
   try {
     const raw = localStorage.getItem(RECENTS_KEY)
     if (!raw) return []
-    const items: Recent[] = JSON.parse(raw)
-    const now = Date.now()
-    return items.filter(r => now - r.timestamp < EXPIRY_MS)
+    return JSON.parse(raw)
   } catch { return [] }
 }
 
@@ -43,7 +40,9 @@ function timeAgo(timestamp: number): string {
   if (mins < 1) return 'just now'
   if (mins < 60) return `${mins}m ago`
   const hrs = Math.floor(mins / 60)
-  return `${hrs}h ago`
+  if (hrs < 24) return `${hrs}h ago`
+  const days = Math.floor(hrs / 24)
+  return `${days}d ago`
 }
 
 export default function App() {
@@ -232,7 +231,7 @@ export default function App() {
       )}
 
       <footer className="footer">
-        <strong>Privacy:</strong> LetterMap runs entirely in your browser. No data leaves your device. Recent words are saved locally on your device only and expire after 24 hours. No cookies. No analytics. Works offline.
+        <strong>Privacy:</strong> LetterMap runs entirely in your browser. No data leaves your device. Recent words are saved on this device only and never sent anywhere. Use Clear to remove them at any time. No cookies. No analytics. Works offline.
       </footer>
     </div>
   )
