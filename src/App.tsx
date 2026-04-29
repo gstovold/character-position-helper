@@ -226,7 +226,7 @@ export default function App() {
       )}
 
       <footer className="footer">
-        <strong>Privacy:</strong> LetterMap runs entirely in your browser. No data leaves your device. Recent words are saved on this device only and never sent anywhere. Use Clear to remove them at any time. No cookies. No analytics. Works offline.
+        <strong>Privacy:</strong> LetterMap runs entirely in your browser. No data leaves your device. Recent words are saved on this device only and never sent anywhere. No cookies. Works offline.
       </footer>
     </div>
   )
