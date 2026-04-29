@@ -51,7 +51,6 @@ export default function App() {
   const [positions, setPositions] = useState('')
   const [recents, setRecents] = useState<Recent[]>([])
   const inputRef = useRef<HTMLInputElement>(null)
-  const saveTimerRef = useRef<ReturnType<typeof setTimeout>>()
 
   useEffect(() => {
     setRecents(loadRecents())
@@ -69,11 +68,19 @@ export default function App() {
 
   const handleInputChange = useCallback((val: string) => {
     setInput(val)
-    clearTimeout(saveTimerRef.current)
-    if (val.trim().length > 1) {
-      saveTimerRef.current = setTimeout(() => addRecent(val.trim()), 1500)
+  }, [])
+
+  const handleInputBlur = useCallback(() => {
+    if (input.trim().length > 1) {
+      addRecent(input.trim())
     }
-  }, [addRecent])
+  }, [input, addRecent])
+
+  const handleInputKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && input.trim().length > 1) {
+      addRecent(input.trim())
+    }
+  }, [input, addRecent])
 
   const handleClearRecents = useCallback(() => {
     localStorage.removeItem(RECENTS_KEY)
@@ -121,6 +128,8 @@ export default function App() {
           type="text"
           value={input}
           onChange={e => handleInputChange(e.target.value)}
+          onBlur={handleInputBlur}
+          onKeyDown={handleInputKeyDown}
           placeholder="e.g. MyP@ssw0rd or ABC123"
           autoComplete="off"
           autoCorrect="off"
