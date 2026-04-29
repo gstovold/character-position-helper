@@ -12,7 +12,7 @@ export default function LoadingScreen() {
         <div className="loader-wordmark">Letter<span>Map</span></div>
       </div>
       <p className="loader-tagline">Character Position Finder</p>
-      <p className="loader-sub">Private · Offline · Instant</p>
+      <p className="loader-sub">No more counting on fingers!</p>
       <div className="loader-dots">
         <span></span><span></span><span></span>
       </div>
