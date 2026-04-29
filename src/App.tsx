@@ -164,7 +164,7 @@ export default function App() {
           type="text"
           value={positions}
           onChange={e => handlePositionsChange(e.target.value)}
-          placeholder="e.g. 1, 3, 6"
+          placeholder="e.g. 1,3,6"
           autoComplete="off"
           inputMode="numeric"
         />
