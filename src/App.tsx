@@ -1,7 +1,16 @@
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 import { parseCharacters, displayChar } from './utils/charUtils'
 import type { CharEntry } from './utils/charUtils'
 import './App.css'
+
+const RECENTS_KEY = 'lettermap_recents'
+const MAX_RECENTS = 4
+const EXPIRY_MS = 24 * 60 * 60 * 1000
+
+interface Recent {
+  word: string
+  timestamp: number
+}
 
 function parseOrderedPositions(str: string): number[] {
   const digits = str.replace(/\D/g, '').split('')
@@ -15,21 +24,72 @@ function parseOrderedPositions(str: string): number[] {
     })
 }
 
+function loadRecents(): Recent[] {
+  try {
+    const raw = localStorage.getItem(RECENTS_KEY)
+    if (!raw) return []
+    const items: Recent[] = JSON.parse(raw)
+    const now = Date.now()
+    return items.filter(r => now - r.timestamp < EXPIRY_MS)
+  } catch { return [] }
+}
+
+function saveRecents(items: Recent[]) {
+  try { localStorage.setItem(RECENTS_KEY, JSON.stringify(items)) } catch {}
+}
+
+function timeAgo(timestamp: number): string {
+  const mins = Math.floor((Date.now() - timestamp) / 60000)
+  if (mins < 1) return 'just now'
+  if (mins < 60) return `${mins}m ago`
+  const hrs = Math.floor(mins / 60)
+  return `${hrs}h ago`
+}
+
 export default function App() {
   const [input, setInput] = useState('')
   const [positions, setPositions] = useState('')
+  const [recents, setRecents] = useState<Recent[]>([])
   const inputRef = useRef<HTMLInputElement>(null)
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout>>()
 
-  const entries: CharEntry[] = parseCharacters(input)
-  const orderedPositions = parseOrderedPositions(positions)
-  const hasChars = entries.length > 0
-  const hasPositions = orderedPositions.length > 0
+  useEffect(() => {
+    setRecents(loadRecents())
+  }, [])
+
+  const addRecent = useCallback((word: string) => {
+    if (!word.trim() || word.trim().length < 2) return
+    let items = loadRecents()
+    items = items.filter(r => r.word !== word)
+    items.unshift({ word, timestamp: Date.now() })
+    items = items.slice(0, MAX_RECENTS)
+    saveRecents(items)
+    setRecents(items)
+  }, [])
+
+  const handleInputChange = useCallback((val: string) => {
+    setInput(val)
+    clearTimeout(saveTimerRef.current)
+    if (val.trim().length > 1) {
+      saveTimerRef.current = setTimeout(() => addRecent(val.trim()), 1500)
+    }
+  }, [addRecent])
+
+  const handleClearRecents = useCallback(() => {
+    localStorage.removeItem(RECENTS_KEY)
+    setRecents([])
+  }, [])
 
   const handleClear = useCallback(() => {
     setInput('')
     setPositions('')
     inputRef.current?.focus()
   }, [])
+
+  const entries: CharEntry[] = parseCharacters(input)
+  const orderedPositions = parseOrderedPositions(positions)
+  const hasChars = entries.length > 0
+  const hasPositions = orderedPositions.length > 0
 
   return (
     <div className="page">
@@ -47,8 +107,8 @@ export default function App() {
       <div className="hero">
         <h1 className="hero-title">Character Position Finder</h1>
         <p className="hero-sub">
+          <span>No more counting on fingers!</span>
           <span>Enter any word and instantly see every character's numerical position.</span>
-          <span>Nothing is saved or sent — ever.</span>
         </p>
       </div>
 
@@ -60,13 +120,37 @@ export default function App() {
           className="input"
           type="text"
           value={input}
-          onChange={e => setInput(e.target.value)}
+          onChange={e => handleInputChange(e.target.value)}
           placeholder="e.g. MyP@ssw0rd or ABC123"
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="off"
           spellCheck={false}
         />
+
+        {recents.length > 0 && (
+          <div className="recents">
+            <div className="recents-header">
+              <span className="recents-label">Recent</span>
+              <button className="recents-clear" onClick={handleClearRecents}>
+                Clear recents
+              </button>
+            </div>
+            <div className="recents-chips">
+              {recents.map((r, i) => (
+                <button
+                  key={i}
+                  className="chip"
+                  onClick={() => { setInput(r.word); inputRef.current?.focus() }}
+                >
+                  <span>{r.word}</span>
+                  <span className="chip-time">{timeAgo(r.timestamp)}</span>
+                </button>
+              ))}
+            </div>
+            <p className="recents-note">Stored on this device only — never sent anywhere.</p>
+          </div>
+        )}
 
         <label className="field-label" htmlFor="pos-input">
           Positions needed <span className="optional">optional</span>
@@ -139,7 +223,7 @@ export default function App() {
       )}
 
       <footer className="footer">
-        <strong>Privacy:</strong> LetterMap runs entirely in your browser. No data leaves your device. No cookies. No analytics. Works offline.
+        <strong>Privacy:</strong> LetterMap runs entirely in your browser. No data leaves your device. Recent words are saved locally on your device only and expire after 24 hours. No cookies. No analytics. Works offline.
       </footer>
     </div>
   )
