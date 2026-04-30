@@ -121,11 +121,13 @@ export default function App() {
       <div className={`page${loading ? ' page-hidden' : ''}`}>
         <nav className="nav">
           <div className="brand">
-            <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect width="52" height="52" rx="14" fill="#C17B3F"/>
-              <text x="26" y="30" fontFamily="Georgia, serif" fontSize="26" fontWeight="400" fill="white" textAnchor="middle">A</text>
-              <text x="26" y="43" fontFamily="monospace" fontSize="9" fontWeight="400" fill="white" opacity="0.7" textAnchor="middle">1</text>
-            </svg>
+            <svg width="52" height="52" viewBox="0 0 48 48" fill="none">
+  <rect width="48" height="48" rx="11" fill="#C17B3F"/>
+  <line x1="16" y1="10" x2="13" y2="38" stroke="white" strokeWidth="3.8" strokeLinecap="round"/>
+  <line x1="27" y1="10" x2="24" y2="38" stroke="white" strokeWidth="3.8" strokeLinecap="round"/>
+  <line x1="9" y1="20" x2="39" y2="20" stroke="white" strokeWidth="3.2" strokeLinecap="round"/>
+  <line x1="9" y1="29" x2="39" y2="29" stroke="white" strokeWidth="3.2" strokeLinecap="round"/>
+</svg>
             <div className="wordmark">Letter<span>Map</span></div>
           </div>
         </nav>
