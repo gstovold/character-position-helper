@@ -49,8 +49,7 @@ function LoadingScreen({ visible }: { visible: boolean }) {
         </svg>
         <div className="loader-wordmark">Letter<span>Map</span></div>
       </div>
-    <p className="loader-tagline">Stop counting on your fingers.</p>
-<p className="loader-sub">Your Nth character, instantly.</p>
+    <p className="loader-tagline">Your Nth character, instantly.</p>
       <div className="loader-dots">
         <span></span><span></span><span></span>
       </div>
@@ -135,9 +134,8 @@ export default function App() {
         </nav>
 
         <div className="hero">
-          <h1 className="hero-title">Stop counting on your fingers!</h1>
+          <h1 className="hero-title">Your Nth character, instantly.</h1>
           <p className="hero-sub">
-            <span>Your Nth character, instantly.</span>
             <span>Enter any word and instantly see every character's numerical position.</span>
           </p>
         </div>
