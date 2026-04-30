@@ -135,7 +135,7 @@ export default function App() {
         </nav>
 
         <div className="hero">
-          <h1 className="hero-title">Stop counting on fingers!</h1>
+          <h1 className="hero-title">Stop counting on your fingers!</h1>
           <p className="hero-sub">
             <span>Your Nth character, instantly.</span>
             <span>Enter any word and instantly see every character's numerical position.</span>
