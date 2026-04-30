@@ -136,7 +136,7 @@ export default function App() {
         <div className="hero">
           <h1 className="hero-title">Your Nth character, instantly.</h1>
           <p className="hero-sub">
-            <span>Enter any word and instantly see every character's numerical position.</span>
+            <span>Enter any word to see every character's numerical position.</span>
           </p>
         </div>
 
